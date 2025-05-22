@@ -1,14 +1,16 @@
 import traceback
 from collections.abc import Generator
 from typing import Literal, Optional
+from dataclasses import dataclass, field
 
 from pptx import Presentation as load_prs
+from pptx.presentation import Presentation as PPTXPresentation
 from pptx.enum.shapes import MSO_SHAPE_TYPE
 from pptx.shapes.base import BaseShape
 from pptx.shapes.group import GroupShape as PPTXGroupShape
 from pptx.slide import Slide as PPTXSlide
 
-from pptagent.utils import Config, get_logger, package_join
+from .utils import Config, get_logger, package_join
 
 from .shapes import (
     Background,
@@ -24,47 +26,22 @@ from .shapes import (
 logger = get_logger(__name__)
 
 
+@dataclass
 class SlidePage:
     """
     A class to represent a slide page in a presentation.
     """
+    shapes: list[ShapeElement]
+    backgrounds: list[Background]
+    slide_idx: int
+    real_idx: int
+    slide_notes: Optional[str]
+    slide_layout_name: Optional[str]
+    slide_title: Optional[str]
+    slide_width: int
+    slide_height: int
 
-    def __init__(
-        self,
-        shapes: list[ShapeElement],
-        backgrounds: list[Background],
-        slide_idx: int,
-        real_idx: int,
-        slide_notes: Optional[str],
-        slide_layout_name: Optional[str],
-        slide_title: Optional[str],
-        slide_width: int,
-        slide_height: int,
-    ):
-        """
-        Initialize a SlidePage.
-
-        Args:
-            shapes (List[ShapeElement]): The shapes in the slide.
-            backgrounds (List[Background]): The backgrounds of the slide.
-            slide_idx (int): The index of the slide.
-            real_idx (int): The real index of the slide.
-            slide_notes (Optional[str]): The notes of the slide.
-            slide_layout_name (Optional[str]): The layout name of the slide.
-            slide_title (Optional[str]): The title of the slide.
-            slide_width (int): The width of the slide.
-            slide_height (int): The height of the slide.
-        """
-        self.shapes = shapes
-        self.backgrounds = backgrounds
-        self.slide_idx = slide_idx
-        self.real_idx = real_idx
-        self.slide_notes = slide_notes
-        self.slide_layout_name = slide_layout_name
-        self.slide_title = slide_title
-        self.slide_width = slide_width
-        self.slide_height = slide_height
-
+    def __post_init__(self):
         # Assign group labels to group shapes
         groups_shapes_labels = []
         for shape in self.shape_filter(GroupShape):
@@ -281,38 +258,20 @@ class SlidePage:
         return len(self.shapes)
 
 
+@dataclass
 class Presentation:
     """
     PPTAgent's representation of a presentation.
     Aiming at a more readable and editable interface.
     """
+    slides: list[SlidePage]
+    error_history: list[tuple[int, str]]
+    slide_width: float
+    slide_height: float
+    source_file: str
+    num_pages: int
 
-    def __init__(
-        self,
-        slides: list[SlidePage],
-        error_history: list[tuple[int, str]],
-        slide_width: float,
-        slide_height: float,
-        file_path: str,
-        num_pages: int,
-    ) -> None:
-        """
-        Initialize the Presentation.
-
-        Args:
-            slides (List[SlidePage]): The slides in the presentation.
-            error_history (List[Tuple[int, str]]): The error history.
-            slide_width (float): The width of the slides.
-            slide_height (float): The height of the slides.
-            file_path (str): The path to the presentation file.
-            num_pages (int): The number of pages in the presentation.
-        """
-        self.slides = slides
-        self.error_history = error_history
-        self.slide_width = slide_width
-        self.slide_height = slide_height
-        self.num_pages = num_pages
-        self.source_file = file_path
+    def __post_init__(self):
         self.prs = load_prs(self.source_file)
         self.layout_mapping = {layout.name: layout for layout in self.prs.slide_layouts}
         self.prs.core_properties.last_modified_by = "PPTAgent"

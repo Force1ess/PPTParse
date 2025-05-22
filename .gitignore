@@ -1,6 +1,7 @@
 __pycache__
 olddata
 data
+build
 tmp
 *ipynb
 .vscode
