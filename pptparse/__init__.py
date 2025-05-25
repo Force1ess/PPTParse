@@ -1,9 +1,5 @@
-"""PPTAgent: Generating and Evaluating Presentations Beyond Text-to-Slides.
-
-This package provides tools to automatically generate presentations from documents,
-following a two-phase approach of Analysis and Generation.
-
-For more information, visit: https://github.com/icip-cas/PPTAgent
+"""
+This package provides tools to parse PowerPoint files.
 """
 
 __version__ = "0.0.1"
