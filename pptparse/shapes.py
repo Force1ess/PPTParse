@@ -2,7 +2,7 @@ import re
 from dataclasses import dataclass, field
 from enum import Enum, auto
 from types import MappingProxyType
-from typing import Callable, ClassVar, Optional, Union, Any, List
+from typing import Any, Callable, ClassVar, Optional, Union
 
 from lxml import etree
 from pptx.dml.fill import FillFormat
@@ -18,7 +18,6 @@ from pptx.shapes.placeholder import PlaceholderPicture, SlidePlaceholder
 from pptx.slide import Slide as PPTXSlide
 from pptx.slide import _Background
 from pptx.text.text import _Paragraph
-from pptx.util import Length
 
 from .utils import (
     Config,
@@ -325,7 +324,13 @@ class Paragraph:
         real_idx = idx
         bullet = paragraph.bullet
         if run is None:
-            return cls(idx=-1, real_idx=real_idx, bullet=bullet, font=Font("", "", None, False, False, False, False), text="")
+            return cls(
+                idx=-1,
+                real_idx=real_idx,
+                bullet=bullet,
+                font=Font("", "", None, False, False, False, False),
+                text="",
+            )
         font = Font(**paragraph.font.get_attrs())
         font.override(Font(**run.font.get_attrs()))
         text = re.sub(r"(_x000B_|\\x0b)", " ", paragraph.text)
@@ -368,7 +373,7 @@ class Paragraph:
 
 @dataclass
 class TextFrame:
-    paragraphs: List[Paragraph] = field(default_factory=list)
+    paragraphs: list[Paragraph] = field(default_factory=list)
     level: int = 0
     text: str = ""
     is_textframe: bool = False

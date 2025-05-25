@@ -1,8 +1,9 @@
-from typing import Any, Dict, List
-from pptparse import Presentation, Config
 from copy import deepcopy
 from dataclasses import asdict
+
 from dacite import from_dict
+
+from pptparse import Config, Presentation
 
 # Load a presentation
 config = Config("/tmp")

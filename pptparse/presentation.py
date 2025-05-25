@@ -1,16 +1,13 @@
 import traceback
 from collections.abc import Generator
+from dataclasses import dataclass
 from typing import Literal, Optional
-from dataclasses import dataclass, field
 
 from pptx import Presentation as load_prs
-from pptx.presentation import Presentation as PPTXPresentation
 from pptx.enum.shapes import MSO_SHAPE_TYPE
 from pptx.shapes.base import BaseShape
 from pptx.shapes.group import GroupShape as PPTXGroupShape
 from pptx.slide import Slide as PPTXSlide
-
-from .utils import Config, get_logger, package_join
 
 from .shapes import (
     Background,
@@ -20,6 +17,7 @@ from .shapes import (
     ShapeElement,
     StyleArg,
 )
+from .utils import Config, get_logger, package_join
 
 # Type variable for ShapeElement subclasses
 
@@ -31,6 +29,7 @@ class SlidePage:
     """
     A class to represent a slide page in a presentation.
     """
+
     shapes: list[ShapeElement]
     backgrounds: list[Background]
     slide_idx: int
@@ -264,6 +263,7 @@ class Presentation:
     PPTAgent's representation of a presentation.
     Aiming at a more readable and editable interface.
     """
+
     slides: list[SlidePage]
     error_history: list[tuple[int, str]]
     slide_width: float

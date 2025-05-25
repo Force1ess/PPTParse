@@ -1,5 +1,3 @@
-import asyncio
-import json
 import logging
 import os
 import shutil
@@ -18,7 +16,8 @@ from pptx.text.text import _Paragraph, _Run
 from pptx.util import Length, Pt
 from tenacity import RetryCallState, retry, stop_after_attempt, wait_fixed
 
-def get_logger(name="pptagent", level=None):
+
+def get_logger(name="pptparse", level=None):
     """
     Get a logger with the specified name and level.
 
@@ -193,6 +192,7 @@ th {
     background-color: #f2f2f2; /* Header background color */
 }
 """
+
 
 def parsing_image(image: Image, image_path: str) -> str:
     # Handle WMF images (PDFs)
